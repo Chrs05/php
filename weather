@@ -1,0 +1,113 @@
+<?php
+    
+
+$curl = curl_init();
+
+$city = $_GET['q'];
+print_r($city);
+
+curl_setopt_array($curl, [
+	CURLOPT_URL => "api.openweathermap.org/data/2.5/weather?q=London&units=metric&appid=58d0cd8ff40c7d20d2e721d3c763a0a0",
+	CURLOPT_RETURNTRANSFER => true,
+	CURLOPT_FOLLOWLOCATION => true,
+	CURLOPT_ENCODING => "",
+	CURLOPT_MAXREDIRS => 10,
+	CURLOPT_TIMEOUT => 30,
+	CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	CURLOPT_CUSTOMREQUEST => "GET",
+	// CURLOPT_HTTPHEADER => [
+	// 	"x-rapidapi-host: community-open-weather-map.p.rapidapi.com",
+	// 	"x-rapidapi-key: cd461b47a7mshea9ead160836874p1765b4jsnaf884e62088a"
+	// ],
+]);
+
+$response = curl_exec($curl);
+$response_str = json_decode($response);
+$err = curl_error($curl);
+
+curl_close($curl);
+$currentTime = time();
+
+
+if ($err) {
+	echo "cURL Error #:" . $err;
+} else {
+?>
+
+<!doctype html>
+<html>
+<head>
+<title>Forecast Weather using OpenWeatherMap with PHP</title>
+
+<style>
+body {
+    font-family: Arial;
+    font-size: 0.95em;
+    color: #929292;
+}
+
+.report-container {
+    border: #E0E0E0 1px solid;
+    padding: 20px 40px 40px 40px;
+    border-radius: 2px;
+    width: 550px;
+    margin: 0 auto;
+}
+
+.weather-icon {
+    vertical-align: middle;
+    margin-right: 20px;
+}
+
+.weather-forecast {
+    color: #212121;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 20px 0px;
+}
+
+span.min-temperature {
+    margin-left: 15px;
+    color: #929292;
+}
+
+.time {
+    line-height: 25px;
+}
+</style>
+
+</head>
+<body>
+
+
+    <div class="report-container">
+        <div class="search-city">
+            <form action="index.php" method="post">
+                <!-- <input type="hidden" name="q" value="'.$city.'" /> -->
+                <input type="text" name="q" placeholder="Search for city">
+                <input type="submit" name="submit">
+            </form>
+        </div>
+        <h2><?php echo $response_str->name; ?> Weather Status</h2>
+        <div class="time">
+            <div><?php echo date("l g:i a", $currentTime); ?></div>
+            <div><?php echo date("jS F, Y",$currentTime); ?></div>
+            <div><?php echo ucwords($response_str->weather[0]->description); ?></div>
+        </div>
+        <div class="weather-forecast">
+            <img
+                src="http://openweathermap.org/img/w/<?php echo $response_str->weather[0]->icon; ?>.png"
+                class="weather-icon" /> <?php echo $response_str->main->temp_max; ?>&deg;C<span
+                class="min-temperature"><?php echo $response_str->main->temp_min; ?>&deg;C</span>
+        </div>
+        <div class="time">
+            <div>Humidity: <?php echo $response_str->main->humidity; ?> %</div>
+            <div>Wind: <?php echo $response_str->wind->speed; ?> km/h</div>
+        </div>
+    </div>
+
+
+</body>
+</html>
+
+<?php } ?>
