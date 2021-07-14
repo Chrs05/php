@@ -1,13 +1,13 @@
 <?php
     
+if(isset($_GET['q']) && !empty($_GET['q'])) {
+    $city = $_GET['q'];
+}
 
 $curl = curl_init();
 
-$city = $_GET['q'];
-print_r($city);
-
 curl_setopt_array($curl, [
-	CURLOPT_URL => "api.openweathermap.org/data/2.5/weather?q=London&units=metric&appid=58d0cd8ff40c7d20d2e721d3c763a0a0",
+	CURLOPT_URL => "api.openweathermap.org/data/2.5/weather?q=".$city."&units=metric&appid=58d0cd8ff40c7d20d2e721d3c763a0a0",
 	CURLOPT_RETURNTRANSFER => true,
 	CURLOPT_FOLLOWLOCATION => true,
 	CURLOPT_ENCODING => "",
@@ -15,10 +15,7 @@ curl_setopt_array($curl, [
 	CURLOPT_TIMEOUT => 30,
 	CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	CURLOPT_CUSTOMREQUEST => "GET",
-	// CURLOPT_HTTPHEADER => [
-	// 	"x-rapidapi-host: community-open-weather-map.p.rapidapi.com",
-	// 	"x-rapidapi-key: cd461b47a7mshea9ead160836874p1765b4jsnaf884e62088a"
-	// ],
+	
 ]);
 
 $response = curl_exec($curl);
@@ -79,11 +76,9 @@ span.min-temperature {
 </head>
 <body>
 
-
     <div class="report-container">
         <div class="search-city">
-            <form action="index.php" method="post">
-                <!-- <input type="hidden" name="q" value="'.$city.'" /> -->
+            <form action="" method="GET">
                 <input type="text" name="q" placeholder="Search for city">
                 <input type="submit" name="submit">
             </form>
